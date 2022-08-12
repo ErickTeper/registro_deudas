@@ -3,7 +3,7 @@ from PyQt5 import QtCore, QtWidgets
 from PyQt5 import uic
 from model.modelo import BaseDeDatos
 from vista.view import Ui_MainWindow
-import asyncio
+from multiprocessing import Process
 import time
 
 class MainWin(QMainWindow):
@@ -14,16 +14,22 @@ class MainWin(QMainWindow):
         self.ui.setupUi(self)
         self.eventos()
         self.conexion_bd = BaseDeDatos()
+        #self.proceso_eventos = Process(target=self.eventos)
 
         self.show()
 
     def eventos(self):
+        
         self.ui.boton_cargar.clicked.connect(self.cargar_deuda)
         self.ui.boton_importar.clicked.connect(self.importar_tabla)
         
-        self.ui.tree_deudores.itemClicked.connect(self.eliminar_modificar)
-      
-        
+        self.ui.boton_pagado.clicked.connect(
+            lambda: self.conexion_bd.modificar_elemento(
+                self.ui.tree_deudores.currentItem().text(0)))
+
+        self.ui.boton_pagado.clicked.connect(
+            lambda: self.conexion_bd.eliminar_elemento(
+                self.ui.tree_deudores.currentItem().text(0)))
         
 
     def cargar_deuda(self):
@@ -37,7 +43,6 @@ class MainWin(QMainWindow):
         datos_deuda = [nombre, apellido, concepto, monto, fecha, vencimiento]
         print('enviando a BaseDeDatos.alta(): ')
         print(datos_deuda)
-        #consulta = BaseDeDatos()
         self.conexion_bd.alta(datos_deuda)
 
     def importar_tabla(self):
@@ -52,14 +57,6 @@ class MainWin(QMainWindow):
                 lista.append(str(dato))           
             print(lista)
             self.ui.tree_deudores.insertTopLevelItems(dato, [QTreeWidgetItem(self.ui.tree_deudores, lista)])
-
-    def eliminar_modificar(self, datos):
-        id_seleccionado = datos.text(0)
-        print("ID del elemento clickeado: " + id_seleccionado)
-        self.ui.boton_eliminar.clicked.connect(lambda: self.conexion_bd.eliminar_elemento(id_seleccionado))
-        self.ui.boton_pagado.clicked.connect(lambda: self.conexion_bd.modificar_elemento(id_seleccionado))
-        print(id_seleccionado)
-
 
 
 if __name__ == "__main__":
