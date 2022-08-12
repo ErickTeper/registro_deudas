@@ -1,21 +1,27 @@
 import sqlite3
 
 
-class BaseDeDatos:
+class BaseDeDatos():
 
     def conexion(self):
 
         # Crea la conexion (y base de datos y tabla en caso de no existir)
-        self.con = sqlite3.connect("base_deudas_v3_0.db")
-        self.cursor = self.con.cursor()
-        self.sql = "CREATE TABLE IF NOT EXISTS deudas (id integer PRIMARY KEY AUTOINCREMENT,\
+        con = sqlite3.connect("base_deudas_v3_0.db")
+        cursor = con.cursor()
+        sql = "CREATE TABLE IF NOT EXISTS deudas (id integer PRIMARY KEY AUTOINCREMENT,\
                     nombre varchar(20) NOT NULL, apellido varchar(30) NOT NULL,\
                     concepto varchar(20) NOT NULL, monto real NOT NULL, \
                     fecha text, vencimiento text, pagado BOOLEAN)"
-        self.cursor.execute(self.sql)
-        self.con.commit()
+        cursor.execute(sql)
+        con.commit()
 
-        return self.con  # retorna la conexion, se utiliza en los demas métodos
+        return con  # retorna la conexion, se utiliza en los demas métodos
+
+    def sumar_contador(arg):
+        def interna(self, *args): 
+            arg(self, *args)
+            print("hola")
+        return interna
 
     def alta(self, datos_deuda):
         print("ejecutando: modelo.BaseDeDatos.alta()")
@@ -38,6 +44,7 @@ class BaseDeDatos:
         con.close()
         return datos_tabla
 
+    @sumar_contador
     def eliminar_elemento(self, id_seleccionado):
         print("estoy en eliminar_elemento, el id_obtenido es: " + id_seleccionado)
         con = self.conexion()
@@ -49,6 +56,7 @@ class BaseDeDatos:
         con.commit()
         con.close()
 
+    @sumar_contador
     def modificar_elemento(self, id_seleccionado):
         print("estoy en modificar_elemento, el id_obtenido es: " + id_seleccionado)
         con = self.conexion()

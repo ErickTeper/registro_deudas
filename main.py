@@ -3,8 +3,7 @@ from PyQt5 import QtCore, QtWidgets
 from PyQt5 import uic
 from model.modelo import BaseDeDatos
 from vista.view import Ui_MainWindow
-from multiprocessing import Process
-import time
+
 
 class MainWin(QMainWindow):
 
@@ -14,24 +13,31 @@ class MainWin(QMainWindow):
         self.ui.setupUi(self)
         self.eventos()
         self.conexion_bd = BaseDeDatos()
-        #self.proceso_eventos = Process(target=self.eventos)
 
         self.show()
-
+    
+    def actualizar(arg):
+        def interna(self):
+            arg(self)
+            MainWin.importar_tabla(self)
+        return interna
+    
+    
     def eventos(self):
-        
+
         self.ui.boton_cargar.clicked.connect(self.cargar_deuda)
         self.ui.boton_importar.clicked.connect(self.importar_tabla)
-        
+   
         self.ui.boton_pagado.clicked.connect(
             lambda: self.conexion_bd.modificar_elemento(
                 self.ui.tree_deudores.currentItem().text(0)))
-
-        self.ui.boton_pagado.clicked.connect(
+           
+        self.ui.boton_eliminar.clicked.connect(
             lambda: self.conexion_bd.eliminar_elemento(
                 self.ui.tree_deudores.currentItem().text(0)))
-        
 
+            
+    @actualizar
     def cargar_deuda(self):
         print('ejecutando: main.MainWin.cargar_deuda()')
         nombre = self.ui.input_nombre.text()
@@ -48,7 +54,6 @@ class MainWin(QMainWindow):
     def importar_tabla(self):
         print('ejecutando: importar tabla')
         self.ui.tree_deudores.clear()
-        #consulta = BaseDeDatos()
         datos_tabla = self.conexion_bd.obtener_tabla()
         #print(datos_tabla)
         for datos in datos_tabla:
