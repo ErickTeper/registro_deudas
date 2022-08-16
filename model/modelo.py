@@ -1,7 +1,8 @@
 import sqlite3
+from observador import Sujeto
 
 
-class BaseDeDatos():
+class BaseDeDatos(Sujeto):
 
     def conexion(self):
 
@@ -17,10 +18,10 @@ class BaseDeDatos():
 
         return con  # retorna la conexion, se utiliza en los demas métodos
 
-    def sumar_contador(arg):
+    def confirmacion(arg):
         def interna(self, *args): 
             arg(self, *args)
-            print("hola")
+            print("modificacion efectuada")
         return interna
 
     def alta(self, datos_deuda):
@@ -31,6 +32,9 @@ class BaseDeDatos():
         sql = "INSERT INTO deudas(id, nombre, apellido, concepto, monto, fecha,\
                vencimiento, pagado) VALUES (?, ?, ?, ?, ?, ?, ?, ?);"
         cursor.execute(sql, tupla_datos)
+
+        self.notificar()
+
         con.commit()
         con.close()
 
@@ -44,7 +48,7 @@ class BaseDeDatos():
         con.close()
         return datos_tabla
 
-    @sumar_contador
+    @confirmacion
     def eliminar_elemento(self, id_seleccionado):
         print("estoy en eliminar_elemento, el id_obtenido es: " + id_seleccionado)
         con = self.conexion()
@@ -53,10 +57,11 @@ class BaseDeDatos():
         sql = "DELETE FROM deudas where id = ?;"
         data = (id_seleccionado,)
         cursor.execute(sql, data)
+        self.notificar()
         con.commit()
         con.close()
 
-    @sumar_contador
+    @confirmacion
     def modificar_elemento(self, id_seleccionado):
         print("estoy en modificar_elemento, el id_obtenido es: " + id_seleccionado)
         con = self.conexion()
@@ -65,5 +70,6 @@ class BaseDeDatos():
         sql = "UPDATE deudas SET pagado = TRUE where id = ?;"
         data = (id_seleccionado,)
         cursor.execute(sql, data)
+        self.notificar()
         con.commit()
         con.close()

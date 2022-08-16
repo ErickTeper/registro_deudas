@@ -3,6 +3,14 @@ from PyQt5 import QtCore, QtWidgets
 from PyQt5 import uic
 from model.modelo import BaseDeDatos
 from vista.view import Ui_MainWindow
+import observador
+
+
+def actualizar(arg, *args,):
+    def interna(self):
+        arg(self)
+        MainWin.importar_tabla(self)
+    return interna
 
 
 class MainWin(QMainWindow):
@@ -13,16 +21,10 @@ class MainWin(QMainWindow):
         self.ui.setupUi(self)
         self.eventos()
         self.conexion_bd = BaseDeDatos()
+        self.el_observador = observador.ConcreteObserverA(self.conexion_bd) # patron observador
 
         self.show()
-    
-    def actualizar(arg):
-        def interna(self):
-            arg(self)
-            MainWin.importar_tabla(self)
-        return interna
-    
-    
+
     def eventos(self):
 
         self.ui.boton_cargar.clicked.connect(self.cargar_deuda)
@@ -35,6 +37,8 @@ class MainWin(QMainWindow):
         self.ui.boton_eliminar.clicked.connect(
             lambda: self.conexion_bd.eliminar_elemento(
                 self.ui.tree_deudores.currentItem().text(0)))
+        
+     #   MainWin.importar_tabla(self)
 
             
     @actualizar
@@ -55,13 +59,14 @@ class MainWin(QMainWindow):
         print('ejecutando: importar tabla')
         self.ui.tree_deudores.clear()
         datos_tabla = self.conexion_bd.obtener_tabla()
-        #print(datos_tabla)
         for datos in datos_tabla:
             lista = []
             for dato in datos:
                 lista.append(str(dato))           
-            print(lista)
+            #print(lista)
             self.ui.tree_deudores.insertTopLevelItems(dato, [QTreeWidgetItem(self.ui.tree_deudores, lista)])
+
+
 
 
 if __name__ == "__main__":
