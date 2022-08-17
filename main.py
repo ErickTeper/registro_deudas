@@ -4,7 +4,7 @@ from PyQt5 import uic
 from model.modelo import BaseDeDatos
 from vista.view import Ui_MainWindow
 import observador
-
+import socket as sk
 
 def actualizar(arg, *args,):
     def interna(self):
@@ -20,6 +20,7 @@ class MainWin(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.eventos()
+        print("error")
         self.conexion_bd = BaseDeDatos()
         self.el_observador = observador.ConcreteObserverA(self.conexion_bd) # patron observador
 
@@ -29,18 +30,16 @@ class MainWin(QMainWindow):
 
         self.ui.boton_cargar.clicked.connect(self.cargar_deuda)
         self.ui.boton_importar.clicked.connect(self.importar_tabla)
-   
-        self.ui.boton_pagado.clicked.connect(
+
+        self.ui.boton_pagado.clicked.connect(    
             lambda: self.conexion_bd.modificar_elemento(
                 self.ui.tree_deudores.currentItem().text(0)))
-           
+
         self.ui.boton_eliminar.clicked.connect(
             lambda: self.conexion_bd.eliminar_elemento(
                 self.ui.tree_deudores.currentItem().text(0)))
-        
-     #   MainWin.importar_tabla(self)
 
-            
+
     @actualizar
     def cargar_deuda(self):
         print('ejecutando: main.MainWin.cargar_deuda()')
@@ -62,11 +61,9 @@ class MainWin(QMainWindow):
         for datos in datos_tabla:
             lista = []
             for dato in datos:
-                lista.append(str(dato))           
-            #print(lista)
+                lista.append(str(dato))
+            # print(lista)
             self.ui.tree_deudores.insertTopLevelItems(dato, [QTreeWidgetItem(self.ui.tree_deudores, lista)])
-
-
 
 
 if __name__ == "__main__":
