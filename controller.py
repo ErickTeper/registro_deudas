@@ -1,10 +1,13 @@
+'''El controlodador se encarga de inicializar el sistema y permite
+establecer una interacción entre el modelo y la vista (main) '''
+
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QMessageBox, QTreeWidgetItem
 from PyQt5 import QtCore, QtWidgets
 from PyQt5 import uic
 from model.modelo import BaseDeDatos
-from vista.view import Ui_MainWindow
+from vista.main import Ui_MainWindow
+from vista.informacion import Ui_informacion
 import observador
-import socket as sk
 
 def actualizar(arg, *args,):
     def interna(self):
@@ -22,14 +25,17 @@ class MainWin(QMainWindow):
         self.eventos()
         print("error")
         self.conexion_bd = BaseDeDatos()
-        self.el_observador = observador.ConcreteObserverA(self.conexion_bd) # patron observador
-
+        # patron observador
+        self.el_observador = observador.ConcreteObserverA(self.conexion_bd) 
         self.show()
 
+    '''El método eventos ejecuta las acciones de cada boton que
+    clickee el usuario'''
     def eventos(self):
 
         self.ui.boton_cargar.clicked.connect(self.cargar_deuda)
         self.ui.boton_importar.clicked.connect(self.importar_tabla)
+        self.ui.boton_info.clicked.connect(self.mostrar_ventana)
 
         self.ui.boton_pagado.clicked.connect(    
             lambda: self.conexion_bd.modificar_elemento(
@@ -39,7 +45,8 @@ class MainWin(QMainWindow):
             lambda: self.conexion_bd.eliminar_elemento(
                 self.ui.tree_deudores.currentItem().text(0)))
 
-
+    '''El método cargar_deuda() envía los datos cargados en el formulario
+    al modelo mediente un objeto de de la clase BaseDeDatos'''
     @actualizar
     def cargar_deuda(self):
         print('ejecutando: main.MainWin.cargar_deuda()')
@@ -54,6 +61,8 @@ class MainWin(QMainWindow):
         print(datos_deuda)
         self.conexion_bd.alta(datos_deuda)
 
+    '''El método importar_tabla() muestra los datos de la tabla de la base de datos
+    y los muerta en el TreeWidget de la vista'''
     def importar_tabla(self):
         print('ejecutando: importar tabla')
         self.ui.tree_deudores.clear()
@@ -64,6 +73,32 @@ class MainWin(QMainWindow):
                 lista.append(str(dato))
             # print(lista)
             self.ui.tree_deudores.insertTopLevelItems(dato, [QTreeWidgetItem(self.ui.tree_deudores, lista)])
+
+    '''corrobora si desea salir'''
+    def closeEvent(self, event):
+        self.pregunta = QMessageBox.question(self, "Sistema de gestion",
+                        "seguro que desea salir?", QMessageBox.Yes |
+                        QMessageBox.No)
+
+        if self.pregunta == QMessageBox.Yes: event.accept()
+        else:
+            event.ignore()
+    
+    '''Muestra ventana con informacion'''
+    def mostrar_ventana(self):
+        self.ventana = informacion_sistema()
+        self.info = Ui_informacion()
+        self.info.setupUi(self.ventana)
+        self.ventana.show()
+        self.ventana.exec_()
+    
+
+    '''clase para crear una ventana con informacion'''
+class informacion_sistema(QDialog):
+
+    def __init__(self):
+        QDialog.__init__(self)
+        uic.loadUi("vista/informacion.ui")
 
 
 if __name__ == "__main__":

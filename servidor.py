@@ -1,3 +1,7 @@
+'''Este archivo debe ejecutarse primero en una terminar antes de abrir
+programa, ya que es el servidor al cual llegará el dato de
+la cantidad de modificaciones que se estén haciendo'''
+
 import socket as sk
 
 mi_socket = sk.socket()  #crea objeto 

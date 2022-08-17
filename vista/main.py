@@ -1,3 +1,7 @@
+'''Esta es la vista, la cual se relaciona unicamente con
+el controlador, aquí unicamente desarrollamos la interfaz mediante PyQT.
+De este modo garantizamos menor acoplamiento, haciendo al sistema más escalable
+a la hora de añadir nuevas funcionalidades'''
 # -*- coding: utf-8 -*-
 
 # Form implementation generated from reading ui file 'vista.ui'

@@ -1,4 +1,8 @@
+'''el patrón observador se encarga de realizar un conteo de la cantidad de
+modificaciones que se ejecutan en la base de datos, y las envia al servidor
+mediante la clase Cliente'''
 import socket as sk
+
 
 class Sujeto:
 
@@ -32,19 +36,20 @@ class ConcreteObserverA(Observador):
 
     def update(self, *args):
         self.modificaciones += 1
-        
+
         print("cantidad de modificaciones: ", self.modificaciones)
         self.conexion_servidor.envio_servidor(self.modificaciones)
-        
 
 
 class Cliente:
-    
+
     def envio_servidor(self, info):
         mi_socket = sk.socket()
-        mi_socket.connect(('localhost', 8000)) # direccion a la que nos necesitamos conectar
+        # direccion a la que nos necesitamos conectar:
+        mi_socket.connect(('localhost', 8000))
         mi_socket.send("cantidad de modificaciones: ".encode())
         mi_socket.send(str(info).encode())
-        respuesta = mi_socket.recv(1024) # buffer 1024 bytes
+        # buffer 1024 bytes:
+        respuesta = mi_socket.recv(1024)
         print(respuesta)
         mi_socket.close()
