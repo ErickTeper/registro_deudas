@@ -4,7 +4,8 @@ esta clase se relaciona con main y con observador'''
 
 import sqlite3
 from observador import Sujeto
-
+import re
+from PyQt5.QtWidgets import QErrorMessage
 
 class BaseDeDatos(Sujeto):
 
@@ -37,18 +38,20 @@ class BaseDeDatos(Sujeto):
     al final un bolean "false" que indica una deuda no paga'''
 
     def alta(self, datos_deuda):
-        print("ejecutando: modelo.BaseDeDatos.alta()")
-        con = self.conexion()
-        cursor = con.cursor()
-        tupla_datos = tuple([None] + datos_deuda + [False])
-        sql = "INSERT INTO deudas(id, nombre, apellido, concepto, monto, fecha,\
-               vencimiento, pagado) VALUES (?, ?, ?, ?, ?, ?, ?, ?);"
-        cursor.execute(sql, tupla_datos)
-
-        self.notificar()
-
-        con.commit()
-        con.close()
+        patron = "[a-zA-Z\s]+(-[^\W\d_]+)?$"
+        if re.match(patron, datos_deuda[0]):
+            print("ejecutando: modelo.BaseDeDatos.alta()")
+            con = self.conexion()
+            cursor = con.cursor()
+            tupla_datos = tuple([None] + datos_deuda + [False])
+            sql = "INSERT INTO deudas(id, nombre, apellido, concepto, monto, fecha,\
+                  vencimiento, pagado) VALUES (?, ?, ?, ?, ?, ?, ?, ?);"
+            cursor.execute(sql, tupla_datos)
+            self.notificar()
+            con.commit()
+            con.close()
+        else:
+            print("ATENCION! solo se aceptan letras en el campo de nombre")
 
     '''Obtener_tabla() genera una consulta de todas las deudas en la base de datos
     y retorna dichos datos'''

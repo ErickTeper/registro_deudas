@@ -44,12 +44,16 @@ class ConcreteObserverA(Observador):
 class Cliente:
 
     def envio_servidor(self, info):
-        mi_socket = sk.socket()
-        # direccion a la que nos necesitamos conectar:
-        mi_socket.connect(('localhost', 8000))
-        mi_socket.send("cantidad de modificaciones: ".encode())
-        mi_socket.send(str(info).encode())
-        # buffer 1024 bytes:
-        respuesta = mi_socket.recv(1024)
-        print(respuesta)
-        mi_socket.close()
+        try:
+            mi_socket = sk.socket()
+            # direccion a la que nos necesitamos conectar:
+            mi_socket.connect(('localhost', 8000))
+            mi_socket.send("el operario realizo un total de ".encode())
+            mi_socket.send(str(info).encode())
+            mi_socket.send(" modificaciones ".encode())
+            # buffer 1024 bytes:
+            respuesta = mi_socket.recv(1024)
+            print(respuesta)
+            mi_socket.close()
+        except:
+            print("no se pudo establecer conexion con el servidor")

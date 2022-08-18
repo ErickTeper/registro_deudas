@@ -1,0 +1,6 @@
+instrucciones de inicio:
+
+1) ejecutar el archivo "servidor" 
+(en la presente carpeta ejecutar "...>python servidor.py") desde el CMD.
+
+2) ejecutar controller para iniciar programa

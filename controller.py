@@ -37,13 +37,9 @@ class MainWin(QMainWindow):
         self.ui.boton_importar.clicked.connect(self.importar_tabla)
         self.ui.boton_info.clicked.connect(self.mostrar_ventana)
 
-        self.ui.boton_pagado.clicked.connect(    
-            lambda: self.conexion_bd.modificar_elemento(
-                self.ui.tree_deudores.currentItem().text(0)))
+        self.ui.boton_pagado.clicked.connect(self.establecer_pagado)
 
-        self.ui.boton_eliminar.clicked.connect(
-            lambda: self.conexion_bd.eliminar_elemento(
-                self.ui.tree_deudores.currentItem().text(0)))
+        self.ui.boton_eliminar.clicked.connect(self.elimina_deudor)
 
     '''El método cargar_deuda() envía los datos cargados en el formulario
     al modelo mediente un objeto de de la clase BaseDeDatos'''
@@ -91,6 +87,20 @@ class MainWin(QMainWindow):
         self.info.setupUi(self.ventana)
         self.ventana.show()
         self.ventana.exec_()
+    
+    def establecer_pagado(self):
+        try:
+            self.conexion_bd.modificar_elemento(
+                self.ui.tree_deudores.currentItem().text(0))
+        except:
+            print("no se seleccionó ningun deudor")
+
+    def elimina_deudor(self):
+        try:
+            self.conexion_bd.eliminar_elemento(
+                self.ui.tree_deudores.currentItem().text(0))
+        except:
+            print("no se seleccionó ningun deudor")
     
 
     '''clase para crear una ventana con informacion'''
